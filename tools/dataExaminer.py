@@ -52,7 +52,7 @@ def show_numpy(filename, electrode):
   print "freq: " + str(data['freq'])
   print
 
-  if "ictal" in filename:
+  if "_ictal" in filename:
     print "latency: " + str(data['latency'])
     print
 
