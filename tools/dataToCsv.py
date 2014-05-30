@@ -48,7 +48,7 @@ def convertNumpyToCsv(filename, csvName):
   
   #associated data information
   print "freq: " + str(data['freq'])
-  if "ictal" in filename:
+  if "_ictal" in filename:
     print "latency: " + str(data['latency'])
 
 
