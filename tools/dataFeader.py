@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
   df = dataFeeder(args[0], args[1], args[2])
   print df.next()
-  print df.next()
+  
   
 
 
