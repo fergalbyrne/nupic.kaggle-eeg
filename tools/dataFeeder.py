@@ -41,7 +41,7 @@ if __name__ == "__main__":
   if len(args) != 3:
     parser.print_help()
     print
-    raise(Exception("dataFeader.py clip.tar.gz Patient_8 interictal"))
+    raise(Exception("dataFeader.py clip.tar.gz Patient_8 ictal"))
 
   df = dataFeeder(args[0], args[1], args[2])
   print df.next()
