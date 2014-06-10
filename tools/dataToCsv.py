@@ -28,8 +28,9 @@ from scipy import io
 from optparse import OptionParser
 
 def convertNumpyToCsv(filename, csvName):
-#  data = io.loadmat("data/Patient_1/Patient_1_interictal_segment_42.mat")
+  #data = io.loadmat("data/Patient_1/Patient_1_interictal_segment_42.mat")
 
+  
   data = io.loadmat(filename)
   np.set_printoptions(threshold=np.nan)
 
