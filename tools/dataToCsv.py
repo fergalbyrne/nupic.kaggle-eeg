@@ -26,10 +26,13 @@ import numpy as np
 import csv
 from scipy import io
 from optparse import OptionParser
+import  datetime,time
 
 def convertNumpyToCsv(filename, csvName):
-#  data = io.loadmat("data/Patient_1/Patient_1_interictal_segment_42.mat")
+ 
+  current_time = datetime.datetime.now()
 
+  
   data = io.loadmat(filename)
   np.set_printoptions(threshold=np.nan)
 
@@ -40,11 +43,21 @@ def convertNumpyToCsv(filename, csvName):
   outputWriter = csv.writer(outputFile)
 
   #header row on csv
-  l_channels = []
+  l_channels = ['timestamp']
+  field_t = ['datatime']
+  delimer = ['T']
+  
+
   for l_channel in data['channels'][0][0]:
     l_channels.append(str(l_channel[0]))
+    field_t.append('float')
+    delimer.append ('')
   #print "l_channels: " + str(l_channels)
   outputWriter.writerow(l_channels)
+  outputWriter.writerow(field_t)
+  outputWriter.writerow(delimer)
+
+
   
   #associated data information
   print "freq: " + str(data['freq'])
@@ -55,7 +68,11 @@ def convertNumpyToCsv(filename, csvName):
   #the actual data:
   #print "transpose: " + repr(np.transpose(data['data']))
   for l_row in np.transpose(data['data']):
-    outputWriter.writerow(l_row)
+    
+    ttime = current_time + datetime.timedelta(microseconds=float(0.0001) )
+    res = [ttime.strftime("%Y-%m-%d %H:%M:%S.%f").strip()] + list(l_row)
+    outputWriter.writerow(res)
+    
     #print (repr(l_row))
 
   outputFile.close()
