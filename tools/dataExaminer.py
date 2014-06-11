@@ -36,18 +36,18 @@ def show_numpy(filename, electrode):
   data = io.loadmat(filename)
   np.set_printoptions(threshold=np.nan)
 
-  print data['data']
+  #print data['data']
 
   #But also on metadata, like the headers:
   print
   print data['__header__']
   print
 
-  print "shape: " + repr(data['data'].shape)
-  print
+  #print "shape: " + repr(data['data'].shape)
+  #print
 
-  print "channels: " + repr(data['channels'])
-  print
+  #print "channels: " + repr(data['channels'])
+  #print
 
   print "freq: " + str(data['freq'])
   print
@@ -56,10 +56,17 @@ def show_numpy(filename, electrode):
     print "latency: " + str(data['latency'])
     print
 
-  print "data[" + str(data['channels'][0][0][int(electrode)]) + "]: ", data['data'][int(electrode)]
+  #print "data[" + str(data['channels'][0][0][int(electrode)]) + "]: ", data['data'][int(electrode)]
 
-  plt.plot(data['data'][int(electrode)], 'b')
-  plt.title(str(data['channels'][0][0][int(electrode)]))
+  colors = ['r', 'g', 'b', 'y', 'c', 'm', 'y', 'k',
+            'a', 'd', 'e', 'f', 'h', 'i', 'n', 'p']
+
+  plt.plot(data['data'][int(0)], 'b', color=colors[0])
+  plt.plot(data['data'][int(1)], 'b', color=colors[1])
+  plt.plot(data['data'][int(2)], 'b', color=colors[2])
+  plt.plot(data['data'][int(3)], 'b', color=colors[3])
+
+  plt.title(str(data['channels'][0][0][int(0)]))
   plt.show()
 
 if __name__ == "__main__":
