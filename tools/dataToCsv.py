@@ -26,6 +26,9 @@ import numpy as np
 import csv
 from scipy import io
 from optparse import OptionParser
+from scipy.stats import scoreatpercentile as sap
+
+BUF_SIZE = 256 #Number of samples in ring buffer for computing stats
 
 def convertNumpyToCsv(filename, csvName):
 #  data = io.loadmat("data/Patient_1/Patient_1_interictal_segment_42.mat")
@@ -40,23 +43,40 @@ def convertNumpyToCsv(filename, csvName):
   outputWriter = csv.writer(outputFile)
 
   #header row on csv
-  l_channels = []
+  l_channels = ["class","latency","MAD","IQD"]
   for l_channel in data['channels'][0][0]:
-    l_channels.append(str(l_channel[0]))
+      l_channels.append(str(l_channel[0]))
   #print "l_channels: " + str(l_channels)
   outputWriter.writerow(l_channels)
-  
+
   #associated data information
   print "freq: " + str(data['freq'])
+  dt = 1.0/float(data['freq'])
+
   if "_ictal" in filename:
-    print "latency: " + str(data['latency'])
+      print "latency: " + str(data['latency'])
+      time = float(data['latency'])
+      dclass = 1
+  else:
+      dclass = -1
+      time = -1
+      dt = 0
 
-
-  #the actual data:
-  #print "transpose: " + repr(np.transpose(data['data']))
+  buf = np.zeros((BUF_SIZE,np.transpose(data['data']).shape[1]))
+  i = 0
+  #Write the class (ictal vs interical), the latency of the sample, and the
+  #amplitude from all sources:
   for l_row in np.transpose(data['data']):
-    outputWriter.writerow(l_row)
-    #print (repr(l_row))
+      buf[i,:] = l_row
+      row = np.zeros((l_row.shape[0]+4))
+      row[0] = dclass
+      row[1] = time
+      row[2] = np.mean(abs(buf[i]-np.mean(buf[i,:]))) #Mean Absolute Difference
+      row[3] = sap(buf,75)-sap(buf,25) #Interquartile Difference (All channels)
+      row[4:] = l_row
+      outputWriter.writerow(row)
+      time += dt
+      i = (i+1)%BUF_SIZE
 
   outputFile.close()
 
