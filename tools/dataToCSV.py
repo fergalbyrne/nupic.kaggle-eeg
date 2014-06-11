@@ -26,19 +26,13 @@ import numpy as np
 import csv
 from scipy import io
 from optparse import OptionParser
-<<<<<<< HEAD
 from scipy.stats import scoreatpercentile as sap
 
 BUF_SIZE = 256 #Number of samples in ring buffer for computing stats
-=======
-import  datetime,time
->>>>>>> upstream/master
 
 def convertNumpyToCsv(filename, csvName):
- 
-  current_time = datetime.datetime.now()
+#  data = io.loadmat("data/Patient_1/Patient_1_interictal_segment_42.mat")
 
-  
   data = io.loadmat(filename)
   np.set_printoptions(threshold=np.nan)
 
@@ -49,31 +43,12 @@ def convertNumpyToCsv(filename, csvName):
   outputWriter = csv.writer(outputFile)
 
   #header row on csv
-<<<<<<< HEAD
   l_channels = ["class","latency","MAD","IQD"]
   for l_channel in data['channels'][0][0]:
       l_channels.append(str(l_channel[0]))
   #print "l_channels: " + str(l_channels)
   outputWriter.writerow(l_channels)
 
-=======
-  l_channels = ['timestamp']
-  field_t = ['datatime']
-  delimer = ['T']
-  
-
-  for l_channel in data['channels'][0][0]:
-    l_channels.append(str(l_channel[0]))
-    field_t.append('float')
-    delimer.append ('')
-  #print "l_channels: " + str(l_channels)
-  outputWriter.writerow(l_channels)
-  outputWriter.writerow(field_t)
-  outputWriter.writerow(delimer)
-
-
-  
->>>>>>> upstream/master
   #associated data information
   print "freq: " + str(data['freq'])
   dt = 1.0/float(data['freq'])
@@ -92,7 +67,6 @@ def convertNumpyToCsv(filename, csvName):
   #Write the class (ictal vs interical), the latency of the sample, and the
   #amplitude from all sources:
   for l_row in np.transpose(data['data']):
-<<<<<<< HEAD
       buf[i,:] = l_row
       row = np.zeros((l_row.shape[0]+4))
       row[0] = dclass
@@ -103,14 +77,6 @@ def convertNumpyToCsv(filename, csvName):
       outputWriter.writerow(row)
       time += dt
       i = (i+1)%BUF_SIZE
-=======
-    
-    ttime = current_time + datetime.timedelta(microseconds=float(0.0001) )
-    res = [ttime.strftime("%Y-%m-%d %H:%M:%S.%f").strip()] + list(l_row)
-    outputWriter.writerow(res)
-    
-    #print (repr(l_row))
->>>>>>> upstream/master
 
   outputFile.close()
 
@@ -126,7 +92,4 @@ if __name__ == "__main__":
 
 
   convertNumpyToCsv(args[0], args[1])
-
-
-
 
