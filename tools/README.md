@@ -17,3 +17,28 @@ dataToCsv.py datafile csvfile
 
 In both cases, the code is pretty simple.  Both scripts writes the data's numpy header information to `stdout`.
 
+
+CSVHelper_Amplitudes.py
+
+Aggregates all the mat files specified or the files contained in the directory 
+specified.
+USAGE:
+```
+CSVHelper_Amplitudes.py csvfile file1.mat file2.mat ...
+```
+        or
+```
+CSVHelper_Amplitudes.py csvfile directory
+```
+
+min_maxValue.py
+
+Finds the minimum and maximum value of amplitude in given file list or all files in the directory.
+
+```
+min_maxValue.py datafile [datafile...]
+```
+or
+```
+min_maxValue.py directory
+```
