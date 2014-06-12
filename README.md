@@ -23,6 +23,7 @@ T,,,,,,,,,,,,,,,,
 Usage varianst
 
 dataFeeder.py Patient2.tar.gz Patient_2 ictal
+
 dataFeeder.py Patient2.tar.gz Patient_2 interictal
 
 
