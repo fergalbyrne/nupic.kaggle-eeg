@@ -20,7 +20,7 @@ datatime,float,float,float,float,float,float,float,float,float,float,float,float
 T,,,,,,,,,,,,,,,,
 
 
-Usage varianst
+***Usage***
 
 dataFeeder.py Patient2.tar.gz Patient_2 ictal
 
