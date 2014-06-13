@@ -97,7 +97,7 @@ def show_numpy(filename):
         if ylimMin > element:
           ylimMin = element
 
-  print "ylim: " +  ylimMax + " : " + ylimMin
+  print "ylim: " +  str(ylimMax) + " : " + str(ylimMin)
 
   colors = ['r', 'g', 'b', 'y', 'c', 'm', 'y', 'k',
             'a', 'd', 'e', 'f', 'h', 'i', 'n', 'p']
@@ -135,31 +135,27 @@ def show_numpy(filename):
 
   plt.subplot(2, 1, 1)
   plt.plot(time_array, mad, 'ko-')
-  plt.title('A MAD/IDC comparison')
   plt.ylabel('MAD')
 
-  plt.subplot(2, 1, 2)
-  plt.plot(time_array, idc, 'r.-')
-  plt.xlabel('time (s)')
-  plt.ylabel('IDC')
+ #frq = k/T # two sides frequency range
+ #frq = frq[range(n/2)] # one side frequency range
 
-  plt.show()
+# Y = fft(y)/n # fft computing and normalization
+# Y = Y[range(n/2)]
 
 
-#  plt.plot(data['data'][int(electrode)], 'b')
-#  plt.plot(mad, 'r')
-#  plt.plot(idc, 'g')
-#  plt.title(str(data['channels'][0][0][int(electrode)]))
-#  plt.show()
+  n = len(mad) # length of the signal
 
-  fourier = np.fft.fft(mad)
+  fourier = np.fft.fft(mad)/n
 
   freq = np.fft.fftfreq(len(mad))
   
-  #print fourier.size
-
-  #plt.plot(freq, fourier.real, freq, fourier.imag)
-  #plt.show()
+  plt.subplot(2, 1, 2)
+  #plt.plot(freq, abs(fourier.real), freq, abs(fourier.imag))
+  plt.plot(freq, abs(fourier))
+  plt.xlabel('freq ')
+  plt.ylabel('fft')
+  plt.show()
 
 
 
