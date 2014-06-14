@@ -26,6 +26,7 @@ import numpy as np
 from scipy import io
 from optparse import OptionParser
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from scipy.stats import scoreatpercentile as sap
 
 
@@ -104,10 +105,10 @@ def show_numpy(filename):
 
   plt.subplot(2, 1, 1)
   #left side
-  plt.plot(time_array,data['data'][int(0)], 'b', color=colors[0])
-  plt.plot(time_array,data['data'][int(1)], 'b', color=colors[1])
-  plt.plot(time_array,data['data'][int(2)], 'b', color=colors[2])
-  plt.plot(time_array,data['data'][int(3)], 'b', color=colors[3])
+  #plt.plot(time_array,data['data'][int(0)], 'b', color=colors[0])
+  #plt.plot(time_array,data['data'][int(1)], 'b', color=colors[1])
+  #plt.plot(time_array,data['data'][int(2)], 'b', color=colors[2])
+  #plt.plot(time_array,data['data'][int(3)], 'b', color=colors[3])
 
   plt.plot(time_array,data['data'][int(4)], 'b', color=colors[4])
   plt.plot(time_array,data['data'][int(5)], 'b', color=colors[5])
@@ -116,10 +117,11 @@ def show_numpy(filename):
 
   #right side
   plt.subplot(2, 1, 2)
-  plt.plot(time_array,data['data'][int(8)], 'b', color=colors[0])
-  plt.plot(time_array,data['data'][int(9)], 'b', color=colors[1])
-  plt.plot(time_array,data['data'][int(10)], 'b', color=colors[2])
-  plt.plot(time_array,data['data'][int(11)], 'b', color=colors[3])
+
+  #plt.plot(time_array,data['data'][int(8)], 'b', color=colors[0])
+  #plt.plot(time_array,data['data'][int(9)], 'b', color=colors[1])
+  #plt.plot(time_array,data['data'][int(10)], 'b', color=colors[2])
+  #plt.plot(time_array,data['data'][int(11)], 'b', color=colors[3])
 
   plt.plot(time_array,data['data'][int(12)], 'b', color=colors[4])
   plt.plot(time_array,data['data'][int(13)], 'b', color=colors[5])
@@ -131,28 +133,44 @@ def show_numpy(filename):
   plt.title('all channels')
   plt.show()
 
+  fig = plt.figure()
+  ax = fig.gca(projection='3d')
+
+  ax.set_xlabel('X')
+  ax.set_ylabel('Y')
+  ax.set_zlabel('Z')
 
 
+  ys = np.arange(5000)
+
+  ax.plot(time_array, ys, zs=data['data'][int(0)])
+  #ax.bar(time_array, 5, z=data['data'][int(2)] )
+
+  plt.show()  
+
+  #plot MAD and IDC
   plt.subplot(2, 1, 1)
-  plt.plot(time_array, mad, 'ko-')
+  plt.plot(time_array, mad, 'k')
   plt.ylabel('MAD')
 
- #frq = k/T # two sides frequency range
- #frq = frq[range(n/2)] # one side frequency range
-
-# Y = fft(y)/n # fft computing and normalization
-# Y = Y[range(n/2)]
-
-
-  n = len(mad) # length of the signal
-
-  fourier = np.fft.fft(mad)/n
-
-  freq = np.fft.fftfreq(len(mad))
-  
   plt.subplot(2, 1, 2)
-  #plt.plot(freq, abs(fourier.real), freq, abs(fourier.imag))
-  plt.plot(freq, abs(fourier))
+  plt.plot(time_array, idc, 'k')
+  plt.ylabel('idc')
+  plt.show()
+
+  #fun with fourier
+  fourier = np.fft.fft(data['data'][int(6)])/len(data['data'][int(6)])
+
+  freq = np.fft.fftfreq(len(data['data'][int(6)]))
+
+  Fk = np.fft.fftshift(fourier)
+  nu = np.fft.fftshift(freq)
+
+  plt.subplot(2, 1, 1)
+  plt.plot(nu, np.real(Fk))
+  plt.subplot(2, 1, 2)
+  plt.plot(nu, np.imag(Fk))
+
   plt.xlabel('freq ')
   plt.ylabel('fft')
   plt.show()
