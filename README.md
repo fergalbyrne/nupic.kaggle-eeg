@@ -8,7 +8,7 @@ Data set generating
 
 
 
-dataFeeder.py - generate csv ready to use with OPF
+dataFeeder.py - generats csv ready to use with OPF
 
 extracts Patient_n_*.mat from tar.file then generate single csv formated for NuPic OPF. 
 Fields names replaced to PN to be unified across any Patient_n. Number of columns takes from first Patient_n_*.mat file 
@@ -20,9 +20,10 @@ datatime,float,float,float,float,float,float,float,float,float,float,float,float
 T,,,,,,,,,,,,,,,,
 
 
-Usage varianst
+***Usage***
 
 dataFeeder.py Patient2.tar.gz Patient_2 ictal
+
 dataFeeder.py Patient2.tar.gz Patient_2 interictal
 
 
