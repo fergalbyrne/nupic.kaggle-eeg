@@ -46,11 +46,12 @@ min_maxValue.py directory
 ```
 
 
-'dataFeeder.py'
+dataFeeder.py
 -------------
 Extract Patient_n data from tar file and store segment by segment into single CSV 
 
 dataFeeder.py  ~/Downloads/clips.tar.gz Patient_8 ictal
+
 dataFeeder.py  ~/Downloads/clips.tar.gz Patient_8 interictal
 
 
