@@ -19,6 +19,7 @@ In both cases, the code is pretty simple.  Both scripts writes the data's numpy 
 
 
 CSVHelper_Amplitudes.py
+-------------------------
 
 Aggregates all the mat files specified or the files contained in the directory 
 specified.
@@ -32,6 +33,7 @@ CSVHelper_Amplitudes.py csvfile directory
 ```
 
 min_maxValue.py
+---------------
 
 Finds the minimum and maximum value of amplitude in given file list or all files in the directory.
 
@@ -42,3 +44,14 @@ or
 ```
 min_maxValue.py directory
 ```
+
+
+'dataFeeder.py'
+-------------
+Extract Patient_n data from tar file and store segment by segment into single CSV 
+
+dataFeeder.py  ~/Downloads/clips.tar.gz Patient_8 ictal
+dataFeeder.py  ~/Downloads/clips.tar.gz Patient_8 interictal
+
+
+
