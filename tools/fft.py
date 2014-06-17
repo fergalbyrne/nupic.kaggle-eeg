@@ -58,7 +58,8 @@ def show_numpy(filename):
   print
 
   #dt = 1.0/float(data['freq'])  
-  dt = 1.0
+  dt = 1.0/float(data['freq'])
+
 
   print "dt: " + str(dt)
   print
@@ -79,15 +80,17 @@ def show_numpy(filename):
   ylimMax = 0
   ylimMin = 0
   for l_row in np.transpose(data['data']):
+      #print "l_row: %s" % repr(l_row)
       buf[i,:] = l_row
-      row = np.zeros((l_row.shape[0]+3))
+      #print "buf: %s" % repr(buf)
+      #print "idc: %s" % repr(sap(buf,75)-sap(buf,25))
+
+      row = np.zeros((l_row.shape[0]+2))
       row[0] = time
       row[1] = np.mean(abs(buf[i]-np.mean(buf[i,:]))) #Mean Absolute Difference
-      row[2] = sap(buf,75)-sap(buf,25) #Interquartile Difference (All channels)
-      row[3:] = l_row
+      row[2:] = l_row
       time_array.append(row[0])
       mad.append(row[1])
-      idc.append(row[2])
       #print "%s,%s,%s" % ( str(row[1]) , str(row[2]) , str(row[3]))
       time += dt
       i = (i+1)%BUF_SIZE
@@ -103,35 +106,35 @@ def show_numpy(filename):
   colors = ['r', 'g', 'b', 'y', 'c', 'm', 'y', 'k',
             'a', 'd', 'e', 'f', 'h', 'i', 'n', 'p']
 
-  plt.subplot(2, 1, 1)
+  #plt.subplot(2, 1, 1)
   #left side
   #plt.plot(time_array,data['data'][int(0)], 'b', color=colors[0])
   #plt.plot(time_array,data['data'][int(1)], 'b', color=colors[1])
   #plt.plot(time_array,data['data'][int(2)], 'b', color=colors[2])
   #plt.plot(time_array,data['data'][int(3)], 'b', color=colors[3])
 
-  plt.plot(time_array,data['data'][int(4)], 'b', color=colors[4])
-  plt.plot(time_array,data['data'][int(5)], 'b', color=colors[5])
-  plt.plot(time_array,data['data'][int(6)], 'b', color=colors[6])
-  plt.plot(time_array,data['data'][int(7)], 'b', color=colors[7])
+  #plt.plot(time_array,data['data'][int(4)], 'b', color=colors[4])
+  #plt.plot(time_array,data['data'][int(5)], 'b', color=colors[5])
+  #plt.plot(time_array,data['data'][int(6)], 'b', color=colors[6])
+  #plt.plot(time_array,data['data'][int(7)], 'b', color=colors[7])
 
   #right side
-  plt.subplot(2, 1, 2)
+  #plt.subplot(2, 1, 2)
 
   #plt.plot(time_array,data['data'][int(8)], 'b', color=colors[0])
   #plt.plot(time_array,data['data'][int(9)], 'b', color=colors[1])
   #plt.plot(time_array,data['data'][int(10)], 'b', color=colors[2])
   #plt.plot(time_array,data['data'][int(11)], 'b', color=colors[3])
 
-  plt.plot(time_array,data['data'][int(12)], 'b', color=colors[4])
-  plt.plot(time_array,data['data'][int(13)], 'b', color=colors[5])
-  plt.plot(time_array,data['data'][int(14)], 'b', color=colors[6])
-  plt.plot(time_array,data['data'][int(15)], 'b', color=colors[7])
+  #plt.plot(time_array,data['data'][int(12)], 'b', color=colors[4])
+  #plt.plot(time_array,data['data'][int(13)], 'b', color=colors[5])
+  #plt.plot(time_array,data['data'][int(14)], 'b', color=colors[6])
+  #plt.plot(time_array,data['data'][int(15)], 'b', color=colors[7])
 
-  plt.ylim(ylimMin, ylimMax)
+  #plt.ylim(ylimMin, ylimMax)
 
-  plt.title('all channels')
-  plt.show()
+  #plt.title('all channels')
+  #plt.show()
 
   fig = plt.figure()
   ax = fig.gca(projection='3d')
@@ -140,22 +143,33 @@ def show_numpy(filename):
   ax.set_ylabel('Y')
   ax.set_zlabel('Z')
 
+  #list of zeros
+  ys = []
+  for i in [0,1,2,3,4,5,6,7,8]:
+    print i
+    ys.append([i] * data['freq'][0])
 
-  ys = np.arange(5000)
+  #print "ys:  %s" % (len(ys))
 
-  ax.plot(time_array, ys, zs=data['data'][int(0)])
+  print "time_array:  %s" % (len(time_array))
+
+  ax.plot(time_array, ys[0], zs=data['data'][int(0)])
+  ax.plot(time_array, ys[1], zs=data['data'][int(1)])
+  ax.plot(time_array, ys[2], zs=data['data'][int(2)])
+  ax.plot(time_array, ys[3], zs=data['data'][int(3)])
+
+  ax.plot(time_array, ys[4], zs=data['data'][int(4)])
+  ax.plot(time_array, ys[5], zs=data['data'][int(5)])
+  ax.plot(time_array, ys[6], zs=data['data'][int(6)])
+  ax.plot(time_array, ys[7], zs=data['data'][int(7)])
   #ax.bar(time_array, 5, z=data['data'][int(2)] )
 
   plt.show()  
 
   #plot MAD and IDC
-  plt.subplot(2, 1, 1)
   plt.plot(time_array, mad, 'k')
   plt.ylabel('MAD')
 
-  plt.subplot(2, 1, 2)
-  plt.plot(time_array, idc, 'k')
-  plt.ylabel('idc')
   plt.show()
 
   #fun with fourier
