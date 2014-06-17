@@ -117,7 +117,7 @@ public class DataStatisticsHelper
 		{
 			//System.out.println("Finding Variance");
 			double mean = getMean();
-			return ( Math.pow(mean, 2) + (sumOfSquares/countValues) - (2*mean*sum/countValues));
+			return ((Math.pow(mean, 2)*countValues) + sumOfSquares - (2*mean*sum))/(countValues-1);
 		}
 
 		public double getStdDev()
