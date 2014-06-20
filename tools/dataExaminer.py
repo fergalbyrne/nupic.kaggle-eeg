@@ -26,59 +26,120 @@ import numpy as np
 from scipy import io
 from optparse import OptionParser
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from scipy.stats import scoreatpercentile as sap
 
-def show_numpy(filename, electrode):
+
+BUF_SIZE = 256 #Number of samples in ring buffer for computing stats
+
+
+def show_numpy(filename):
 #  data = io.loadmat("data/Patient_1/Patient_1_interictal_segment_42.mat")
 
   print "filename: " + filename
-  print "electrode: " + electrode
 
   data = io.loadmat(filename)
   np.set_printoptions(threshold=np.nan)
 
-  #print data['data']
+#  print data['data']
 
   #But also on metadata, like the headers:
   print
   print data['__header__']
   print
 
-  #print "shape: " + repr(data['data'].shape)
-  #print
+  print "shape: " + repr(data['data'].shape)
+  print
 
-  #print "channels: " + repr(data['channels'])
-  #print
+  print "channels: " + repr(data['channels'])
+  print
 
   print "freq: " + str(data['freq'])
   print
 
+  #dt = 1.0/float(data['freq'])  
+  dt = 1.0/float(data['freq'])
+
+
+  print "dt: " + str(dt)
+  print
+
   if "_ictal" in filename:
-    print "latency: " + str(data['latency'])
-    print
+      print "latency: " + str(data['latency'])
+      time = 0 - float(data['latency'])
+  else:
+      dclass = -1
+      time = 0 
 
-  #print "data[" + str(data['channels'][0][0][int(electrode)]) + "]: ", data['data'][int(electrode)]
 
-  colors = ['r', 'g', 'b', 'y', 'c', 'm', 'y', 'k',
-            'a', 'd', 'e', 'f', 'h', 'i', 'n', 'p']
+  buf = np.zeros((BUF_SIZE,np.transpose(data['data']).shape[1]))
+  i = 0
+  time_array = []
+  mad = []
+  idc = []
+  ylimMax = 0
+  ylimMin = 0
+  for l_row in np.transpose(data['data']):
+      #print "l_row: %s" % repr(l_row)
+      buf[i,:] = l_row
+      #print "buf: %s" % repr(buf)
+      #print "idc: %s" % repr(sap(buf,75)-sap(buf,25))
 
-  plt.plot(data['data'][int(0)], 'b', color=colors[0])
-  plt.plot(data['data'][int(1)], 'b', color=colors[1])
-  plt.plot(data['data'][int(2)], 'b', color=colors[2])
-  plt.plot(data['data'][int(3)], 'b', color=colors[3])
+      row = np.zeros((l_row.shape[0]+2))
+      row[0] = time
+      row[1] = np.mean(abs(buf[i]-np.mean(buf[i,:]))) #Mean Absolute Difference
+      row[2:] = l_row
+      time_array.append(row[0])
+      mad.append(row[1])
+      #print "%s,%s,%s" % ( str(row[1]) , str(row[2]) , str(row[3]))
+      time += dt
+      i = (i+1)%BUF_SIZE
 
-  plt.title(str(data['channels'][0][0][int(0)]))
+      for element in l_row:
+        if ylimMax < element:
+          ylimMax = element
+        if ylimMin > element:
+          ylimMin = element
+
+  print "ylim: " +  str(ylimMax) + " : " + str(ylimMin)
+
+  fig = plt.figure()
+  ax = fig.gca(projection='3d')
+
+  ax.set_xlabel('X')
+  ax.set_ylabel('Y')
+  ax.set_zlabel('Z')
+
+  #list of zeros
+  ys = []
+  i = 0
+  for sensor in data['data']:
+    print i
+    ax.plot(time_array,([i] * data['freq'][0]), zs=sensor)
+    i += 1 
+
+  #print "ys:  %s" % (len(ys))
+
+  print "time_array:  %s" % (len(time_array))
+
+  plt.show()  
+
+  #plot MAD and IDC
+  plt.plot(time_array, mad, 'k')
+  plt.ylabel('MAD')
+
   plt.show()
 
+
 if __name__ == "__main__":
-  parser = OptionParser("dataExaminer textfile electrode")
+  parser = OptionParser("dataExaminer textfile")
 
   (options, args) = parser.parse_args()
 
-  if len(args) != 2:
+  if len(args) != 1:
     parser.print_help()
     print
-    raise(Exception("dataExaminer.py textfile electrode"))
+    raise(Exception("dataExaminer.py textfile"))
 
-  show_numpy(args[0], args[1])
-
+  show_numpy(args[0])
 

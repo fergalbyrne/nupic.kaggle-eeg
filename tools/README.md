@@ -6,7 +6,8 @@ Tools that may be helpful:
 `dataExaminer.py`: makes (sorta) pretty charts from the data. Arguments as follows:  
 
 ```
-dataExaminer.py textfile electrode
+dataExaminer.py textfile makes a 3d graph of all electrodes, and then a graph of the total MAD score
+
 ```
 
 `dataToCsv.py`: turns it into a csv. Arguments as follows: 

@@ -23,73 +23,118 @@
 
 
 import numpy as np
-import csv
 from scipy import io
 from optparse import OptionParser
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from scipy.stats import scoreatpercentile as sap
+
 
 BUF_SIZE = 256 #Number of samples in ring buffer for computing stats
 
-def convertNumpyToCsv(filename, csvName):
+
+def show_numpy(filename):
 #  data = io.loadmat("data/Patient_1/Patient_1_interictal_segment_42.mat")
+
+  print "filename: " + filename
 
   data = io.loadmat(filename)
   np.set_printoptions(threshold=np.nan)
 
+#  print data['data']
 
-  print "Preparing to output %s data to %s" % (filename, csvName)
-  outputFile = open(csvName, "w")
+  #But also on metadata, like the headers:
+  print
+  print data['__header__']
+  print
 
-  outputWriter = csv.writer(outputFile)
+  print "shape: " + repr(data['data'].shape)
+  print
 
-  #header row on csv
-  l_channels = ["class","latency","MAD","IQD"]
-  for l_channel in data['channels'][0][0]:
-      l_channels.append(str(l_channel[0]))
-  #print "l_channels: " + str(l_channels)
-  outputWriter.writerow(l_channels)
+  print "channels: " + repr(data['channels'])
+  print
 
-  #associated data information
   print "freq: " + str(data['freq'])
+  print
+
+  #dt = 1.0/float(data['freq'])  
   dt = 1.0/float(data['freq'])
+
+
+  print "dt: " + str(dt)
+  print
 
   if "_ictal" in filename:
       print "latency: " + str(data['latency'])
-      time = float(data['latency'])
-      dclass = 1
+      time = 0 - float(data['latency'])
   else:
       dclass = -1
-      time = -1
-      dt = 0
+      time = 0 
+
 
   buf = np.zeros((BUF_SIZE,np.transpose(data['data']).shape[1]))
   i = 0
-  #Write the class (ictal vs interical), the latency of the sample, and the
-  #amplitude from all sources:
+  time_array = []
+  mad = []
+  idc = []
+  ylimMax = 0
+  ylimMin = 0
   for l_row in np.transpose(data['data']):
+      #print "l_row: %s" % repr(l_row)
       buf[i,:] = l_row
-      row = np.zeros((l_row.shape[0]+4))
-      row[0] = dclass
-      row[1] = time
-      row[2] = np.mean(abs(buf[i]-np.mean(buf[i,:]))) #Mean Absolute Difference
-      row[3] = sap(buf,75)-sap(buf,25) #Interquartile Difference (All channels)
-      row[4:] = l_row
-      outputWriter.writerow(row)
+      #print "buf: %s" % repr(buf)
+      #print "idc: %s" % repr(sap(buf,75)-sap(buf,25))
+
+      row = np.zeros((l_row.shape[0]+2))
+      row[0] = time
+      row[1] = np.mean(abs(buf[i]-np.mean(buf[i,:]))) #Mean Absolute Difference
+      row[2:] = l_row
+      time_array.append(row[0])
+      mad.append(row[1])
+      #print "%s,%s,%s" % ( str(row[1]) , str(row[2]) , str(row[3]))
       time += dt
       i = (i+1)%BUF_SIZE
 
-  outputFile.close()
+      for element in l_row:
+        if ylimMax < element:
+          ylimMax = element
+        if ylimMin > element:
+          ylimMin = element
+
+  #plot MAD and IDC
+  plt.plot(time_array, mad, 'k')
+  plt.ylabel('MAD')
+
+  plt.show()
+
+  #fun with fourier
+  #fourier = np.fft.fft(data['data'][int(6)])/len(data['data'][int(6)])
+  fourier = np.fft.fft(mad)/len(mad)
+
+  #freq = np.fft.fftfreq(len(data['data'][int(6)]))
+  freq = np.fft.fftfreq(len(mad))
+
+  Fk = np.fft.fftshift(fourier)
+  nu = np.fft.fftshift(freq)
+
+  plt.subplot(2, 1, 1)
+  plt.plot(nu, np.real(Fk))
+  plt.subplot(2, 1, 2)
+  plt.plot(nu, np.imag(Fk))
+
+  plt.show()
+
+
 
 if __name__ == "__main__":
-  parser = OptionParser("datatoCsv.py datafile csvfile")
+  parser = OptionParser("dataExaminer textfile")
 
   (options, args) = parser.parse_args()
 
-  if len(args) != 2:
+  if len(args) != 1:
     parser.print_help()
     print
-    raise(Exception("dataToCsv.py datafile csvfile"))
+    raise(Exception("dataExaminer.py textfile"))
 
-
-  convertNumpyToCsv(args[0], args[1])
+  show_numpy(args[0])
 
