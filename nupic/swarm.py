@@ -24,6 +24,7 @@ Groups together the code dealing with swarming.
 (This is a component of the One Hot Gym Prediction Tutorial.)
 """
 import os
+import sys
 import pprint
 
 from nupic.swarming import permutations_runner
@@ -102,4 +103,12 @@ def swarm(filePath):
 
 if __name__ == "__main__":
   print DESCRIPTION
-  swarm(INPUT_FILE)
+  args = sys.argv[1:]
+  if not len(args):
+    parser.print_help()
+    print
+    raise(Exception("textfile required"))
+
+  swarm(args[0])
+
+

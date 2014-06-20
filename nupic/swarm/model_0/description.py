@@ -35,7 +35,7 @@ from nupic.frameworks.opf.expdescriptionhelpers import importBaseDescription
 # the sub-experiment configuration
 config ={
   'aggregationInfo' : {'seconds': 0, 'fields': [], 'months': 0, 'days': 0, 'years': 0, 'hours': 0, 'microseconds': 0, 'weeks': 0, 'minutes': 0, 'milliseconds': 0},
-  'modelParams' : {'sensorParams': {'encoders': {'_classifierInput': {'maxval': 500.0, 'classifierOnly': True, 'minval': -500.0, 'clipInput': True, 'n': 28, 'fieldname': 'mad', 'w': 21, 'type': 'ScalarEncoder'}, u'mad': {'maxval': 500.0, 'name': 'mad', 'clipInput': True, 'minval': -500.0, 'n': 22, 'fieldname': 'mad', 'w': 21, 'type': 'ScalarEncoder'}}}, 'spParams': {'synPermInactiveDec': 0.10000000000000001}, 'tpParams': {'minThreshold': 9, 'activationThreshold': 12, 'pamLength': 1}, 'clParams': {'alpha': 0.0001}},
+  'modelParams' : {'sensorParams': {'encoders': {'_classifierInput': {'maxval': 500.0, 'classifierOnly': True, 'minval': -500.0, 'clipInput': True, 'n': 311, 'fieldname': 'mad', 'w': 21, 'type': 'ScalarEncoder'}, u'mad': {'maxval': 500.0, 'name': 'mad', 'clipInput': True, 'minval': -500.0, 'n': 484, 'fieldname': 'mad', 'w': 21, 'type': 'ScalarEncoder'}}}, 'spParams': {'synPermInactiveDec': 0.092522500000000008}, 'tpParams': {'minThreshold': 10, 'activationThreshold': 12, 'pamLength': 5}, 'clParams': {'alpha': 0.042557500000000005}},
 
 }
 
