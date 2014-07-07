@@ -47,17 +47,20 @@ def convertNumpyToCsv(outputWriter,filename):
   channels = []
   for channel in data['channels'][0][0]:
     channels.append(str(channel[0]))
-  print "channels: " + str(channels) 
+  if DEBUG == True:
+    print "channels: " + str(channels) 
   
   #associated data information
-  print "freq: " + str(data['freq'][0])
+  if DEBUG == True:
+    print "freq: " + str(data['freq'][0])
 
   latency =0
   seizure=0  # False
   if "_ictal" in filename:
     latency = data['latency'][0]
     seizure=1
-  print "latency: " + str(latency)
+  if DEBUG == True:
+    print "latency: " + str(latency)
 
   channelIndex = 0
   for channelData in data['data']:
@@ -85,7 +88,7 @@ if __name__ == "__main__":
     DIR = args[1]
     if DIR[-1] != '/':
       DIR = DIR + '/'
-    filelist.extend(glob.glob(DIR+"*.mat"))
+    filelist.extend(glob.glob(DIR+"*ictal*.mat"))
   else:
     filelist.extend(args[1:])
 

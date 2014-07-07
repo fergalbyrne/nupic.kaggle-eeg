@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pylab
 
-KMAX=25
+KMAX=50
 inputFile = open('hfdOutput_kmax_'+str(KMAX)+'.csv', 'rb')
 csvreader = csv.reader(inputFile, delimiter=',')
 
