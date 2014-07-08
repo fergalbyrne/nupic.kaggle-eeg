@@ -1,3 +1,4 @@
 data/*
 aggData/*
 csvData/*
+*.pyc
