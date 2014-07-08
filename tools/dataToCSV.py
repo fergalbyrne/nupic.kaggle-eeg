@@ -69,10 +69,13 @@ def convertNumpyToCsv(filename, csvName):
   for l_row in np.transpose(data['data']):
       buf[i,:] = l_row
       row = np.zeros((l_row.shape[0]+4))
+      print "idc: %s" % repr(sap(buf,75)-sap(buf,25))
+
       row[0] = dclass
       row[1] = time
       row[2] = np.mean(abs(buf[i]-np.mean(buf[i,:]))) #Mean Absolute Difference
-      row[3] = sap(buf,75)-sap(buf,25) #Interquartile Difference (All channels)
+      row[3] = 5
+      #row[3] = sap(buf,75)-sap(buf,25) #Interquartile Difference (All channels)
       row[4:] = l_row
       outputWriter.writerow(row)
       time += dt
