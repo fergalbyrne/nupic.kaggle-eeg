@@ -76,6 +76,7 @@ def meanAbs(l_np):
 #  print "meanAbs:  " + repr(np.mean(np.absolute(l_np),axis=1))
   return np.mean(np.absolute(l_np),axis=1)
 
+
 def hfd(l_np):
   hfd_ret = np.zeros(l_np.shape[0])
   #print "size: " + repr(l_np.shape[0])
@@ -104,10 +105,27 @@ def processFileVariance(data, ow):
   ow.writerow(variance(np.absolute(data['data'])))
 
 def processFileHFD(data, ow):
-  l_array = []
+  ow.writerow(hfd(data['data']))
+
+def processFileBinPower(data, owDelta, owTheta, owAlpha, owBeta, freq):
+  hfdDelta = np.zeros(data['data'].shape[0])
+  hfdTheta = np.zeros(data['data'].shape[0])
+  hfdAlpha = np.zeros(data['data'].shape[0])
+  hfdBeta = np.zeros(data['data'].shape[0])
+  #print "size: " + repr(l_np.shape[0])
+  #print
   for i in range(0,data['data'].shape[0]):
-    l_array.append(pyeeg.hfd(data['data'][i], 9))
-  ow.writerow(l_array)
+    binPowerArray = pyeeg.bin_power(data['data'][i], [0.5,4,7,12,30], freq)
+    hfdDelta[i]=(binPowerArray[1][0])
+    hfdTheta[i]=(binPowerArray[1][1])
+    hfdAlpha[i]=(binPowerArray[1][2])
+    hfdBeta[i]=(binPowerArray[1][3])
+
+  owDelta.writerow(hfdDelta)
+  owTheta.writerow(hfdTheta)
+  owAlpha.writerow(hfdAlpha)
+  owBeta.writerow(hfdBeta)
+
 
 def processFileStdDev(data, ow):
   ow.writerow(stdDev(np.absolute(data['data'])))
@@ -121,63 +139,11 @@ def printProcessFile(filename, ow):
   #full_list.append(os.path.join(filename, filename))
     data = io.loadmat(filename)
     np.set_printoptions(threshold=np.nan)
-#  for l_channel in data['channels'][0][0]:
-#    print repr(l_channel)
 
-    print "freq: " + str(data['freq'])
-    if "_ictal" in filename:
-        print "latency: " + str(data['latency'])
+    print repr(np.mean(np.absolute(data['data']), axis=1))
+    print repr(stdDev(np.absolute(data['data'])))
+    print repr(hfd(data['data']))
 
-#  ow.writerow(minimum(data['data']))
-#  ow.writerow(maximum(data['data']))
-#  ow.writerow(median(data['data']))
-#  ow.writerow(average(data['data']))
-#  ow.writerow(mean(data['data']))
-#  ow.writerow(variance(data['data']))
- # print "stddev: " + repr(stdDev(data['data']))
- # print "mean: " + repr(mean(data['data']))
-  #ow.writerow(stdDev(data['data']))
-#  ow.writerow(kurtosis(data['data']))
-    print "kur: " + repr(kurtosis(data['data']))
-    print "skew: " + repr(skewness(data['data']))
-#  ow.writerow(skewness(data['data']))
-#  ow.writerow(summation(data['data']))
-#  ow.writerow(meanAbs(data['data']))
-
-    print "variance-abs: " + repr(variance(np.absolute(data['data'])))
-    print "stddev-abs: " + repr(stdDev(np.absolute(data['data'])))
-    print "mean-abs: " + repr(meanAbs(data['data']))
-    #print "binPower: " + repr(binPower(data['data']))
-    l_column = 0
-    print
-    print
-    print "hfd 0: " + repr(pyeeg.hfd(data['data'][0], 9))
-    print "hfd 6: " + repr(pyeeg.hfd(data['data'][6], 9))
-    print 
-    print "hfd: " + repr(hfd(data['data']))
-
-
-#  for l_channel in data['channels'][0][0]:
-    #print repr(l_channel)
-    #print l_column
-    #print minimum(data['data'])
-    #print minimum(data['data'])[0]
-
-#    ow.writerow( [ minimum(data['data'])[l_column],
-#                   maximum(data['data'])[l_column],
-#                   median(data['data'])[l_column],
-#                   average(data['data'])[l_column],
-#                   mean(data['data'])[l_column],
-#                   variance(data['data'])[l_column],
-#                   stdDev(data['data'])[l_column],
-#                   kurtosis(data['data'])[l_column],
-#                   skewness(data['data'])[l_column],
-#                   summation(data['data'])[l_column],
-#                   meanAbs(data['data'])[l_column]
-#                 ])
-
-
-#    l_column+=1
 
 
 

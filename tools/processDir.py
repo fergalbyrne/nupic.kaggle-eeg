@@ -31,7 +31,7 @@ import csv
 import numpy as np
 from scipy import io
 from optparse import OptionParser
-from processFile import processFileHFD, processFileMin, processFileMax, processFileVariance, processFileMeanAbs, processFileKur, processFileVariance, processFileSkew
+from processFile import processFileHFD, processFileMin, processFileMax, processFileVariance, processFileMeanAbs, processFileKur, processFileVariance, processFileSkew, processFileBinPower
 
 
 
@@ -79,8 +79,20 @@ def processDir(dirname, outputCsv):
   outputFileMeanAbs = open(os.path.join(outputCsv, "meanAbs.csv"), "w")
   outputWriterMeanAbs = csv.writer(outputFileMeanAbs)
 
-  #outputFileHFD = open(os.path.join(outputCsv, "hfd.csv"), "w")
-  #outputWriterHFD = csv.writer(outputFileHFD)
+  outputFileBinPowerDelta = open(os.path.join(outputCsv, "binPowDelta.csv"), "w")
+  outputWriterBinPowerDelta = csv.writer(outputFileBinPowerDelta)
+
+  outputFileBinPowerTheta = open(os.path.join(outputCsv, "binPowTheta.csv"), "w")
+  outputWriterBinPowerTheta = csv.writer(outputFileBinPowerTheta)
+
+  outputFileBinPowerAlpha = open(os.path.join(outputCsv, "binPowAlpha.csv"), "w")
+  outputWriterBinPowerAlpha = csv.writer(outputFileBinPowerAlpha)
+
+  outputFileBinPowerBeta = open(os.path.join(outputCsv, "binPowBeta.csv"), "w")
+  outputWriterBinPowerBeta = csv.writer(outputFileBinPowerBeta)
+
+  outputFileHFD = open(os.path.join(outputCsv, "hfd.csv"), "w")
+  outputWriterHFD = csv.writer(outputFileHFD)
 
   #outputWriter.writerow( [ 
   #               "minimum",
@@ -106,9 +118,10 @@ def processDir(dirname, outputCsv):
       processFileMax(data, outputWriterMax)
       processFileKur(data, outputWriterKur)
       processFileSkew(data, outputWriterSkew)
+      processFileBinPower(data, outputWriterBinPowerDelta, outputWriterBinPowerTheta, outputWriterBinPowerAlpha, outputWriterBinPowerBeta,data['freq'][0])
       processFileVariance(data, outputWriterVariance)
       processFileMeanAbs(data, outputWriterMeanAbs)
-      #processFileHFD(data, outputWriterHFD)
+      processFileHFD(data, outputWriterHFD)
 
   #now for ictal (seizure)
   for filename in sorted(os.listdir (dirname), key=numericSort):
@@ -120,17 +133,22 @@ def processDir(dirname, outputCsv):
       processFileMax(data, outputWriterMax)
       processFileKur(data, outputWriterKur)
       processFileSkew(data, outputWriterSkew)
+      processFileBinPower(data, outputWriterBinPowerDelta, outputWriterBinPowerTheta, outputWriterBinPowerAlpha, outputWriterBinPowerBeta,data['freq'][0])
       processFileVariance(data, outputWriterVariance)
       processFileMeanAbs(data, outputWriterMeanAbs)
-      #processFileHFD(data, outputWriterHFD)
+      processFileHFD(data, outputWriterHFD)
 
   #outputFileMin.close()
   outputFileMax.close()
   outputFileKur.close()
   outputFileSkew.close()
+  outputFileBinPowerDelta.close()
+  outputFileBinPowerTheta.close()
+  outputFileBinPowerAlpha.close()
+  outputFileBinPowerBeta.close()
   outputFileVariance.close()
   outputFileMeanAbs.close()
-  #outputFileFileHFD.close()
+  outputFileFileHFD.close()
   return
 
 if __name__ == "__main__":
