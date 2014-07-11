@@ -82,8 +82,29 @@ def hfd(l_np):
   #print "size: " + repr(l_np.shape[0])
   #print
   for i in range(0,l_np.shape[0]):
-    hfd_ret[i] = pyeeg.hfd(l_np[i], 9)
+    hfd_ret[i] = pyeeg.hfd(l_np[i], 25)
   return hfd_ret
+
+def binAlpha(l_np):
+  freq = l_np.shape[1]
+  #print "freq: " + str(freq)
+  binPowAlpha = np.zeros(l_np.shape[0])
+  for i in range(0,l_np.shape[0]):
+    binPowerArray = pyeeg.bin_power(l_np[i], [0.5,4,7,12,30], freq)
+    binPowAlpha[i]=(binPowerArray[1][2])
+
+  return binPowAlpha
+
+def binTheta(l_np):
+  freq = l_np.shape[1]
+  #print "freq: " + str(freq)
+  binPowTheta = np.zeros(l_np.shape[0])
+  for i in range(0,l_np.shape[0]):
+    binPowerArray = pyeeg.bin_power(l_np[i], [0.5,4,7,12,30], freq)
+    binPowTheta[i]=(binPowerArray[1][1])
+  return binPowTheta
+
+
 
 
 def processFileMin(data, ow):
@@ -108,23 +129,23 @@ def processFileHFD(data, ow):
   ow.writerow(hfd(data['data']))
 
 def processFileBinPower(data, owDelta, owTheta, owAlpha, owBeta, freq):
-  hfdDelta = np.zeros(data['data'].shape[0])
-  hfdTheta = np.zeros(data['data'].shape[0])
-  hfdAlpha = np.zeros(data['data'].shape[0])
-  hfdBeta = np.zeros(data['data'].shape[0])
+  binPowDelta = np.zeros(data['data'].shape[0])
+  binPowTheta = np.zeros(data['data'].shape[0])
+  binPowAlpha = np.zeros(data['data'].shape[0])
+  binPowBeta = np.zeros(data['data'].shape[0])
   #print "size: " + repr(l_np.shape[0])
   #print
   for i in range(0,data['data'].shape[0]):
     binPowerArray = pyeeg.bin_power(data['data'][i], [0.5,4,7,12,30], freq)
-    hfdDelta[i]=(binPowerArray[1][0])
-    hfdTheta[i]=(binPowerArray[1][1])
-    hfdAlpha[i]=(binPowerArray[1][2])
-    hfdBeta[i]=(binPowerArray[1][3])
+    binPowDelta[i]=(binPowerArray[1][0])
+    binPowTheta[i]=(binPowerArray[1][1])
+    binPowAlpha[i]=(binPowerArray[1][2])
+    binPowBeta[i]=(binPowerArray[1][3])
 
-  owDelta.writerow(hfdDelta)
-  owTheta.writerow(hfdTheta)
-  owAlpha.writerow(hfdAlpha)
-  owBeta.writerow(hfdBeta)
+  owDelta.writerow(binPowDelta)
+  owTheta.writerow(binPowTheta)
+  owAlpha.writerow(binPowAlpha)
+  owBeta.writerow(binPowBeta)
 
 
 def processFileStdDev(data, ow):
@@ -143,6 +164,8 @@ def printProcessFile(filename, ow):
     print repr(np.mean(np.absolute(data['data']), axis=1))
     print repr(stdDev(np.absolute(data['data'])))
     print repr(hfd(data['data']))
+    print repr(binAlpha(data['data']))
+    print repr(binTheta(data['data']))
 
 
 

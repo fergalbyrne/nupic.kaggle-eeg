@@ -32,6 +32,7 @@ import numpy as np
 from scipy import io
 from optparse import OptionParser
 from processFile import processFileHFD, processFileMin, processFileMax, processFileVariance, processFileMeanAbs, processFileKur, processFileVariance, processFileSkew, processFileBinPower
+from processFile import maximum, mean, variance, hfd, binAlpha, binTheta
 
 
 
@@ -50,6 +51,83 @@ def numericSort(value):
     parts = numbers.split(value)
     parts[1::2] = map(int, parts[1::2])
     return parts
+
+def dataSplit(data):
+  splitter = data.shape[1]/10
+  newData = []
+
+  #break array into 9 sections
+  for i in range(0,9):
+    #print (i*splitter), ((i+1) * splitter)
+    #print np.transpose((np.transpose(data))[(i*splitter):(i+1) * splitter:1]).shape
+    newData.append(np.transpose((np.transpose(data))[(i*splitter):(i+1) * splitter:1]))
+
+  #put 10th section on the end
+  #print (9*splitter), "INFInITY"
+  #print np.transpose((np.transpose(data))[(9*splitter)::1])
+  newData.append(np.transpose((np.transpose(data))[(9*splitter)::1]))
+
+  #print repr(len(newData))
+
+  return newData
+
+def pickAlgorithms(dirname, outputCsv):
+  maxArrayInterictal = []
+  #maxArrayIctal = []
+  meanArrayInterictal = []
+  varArrayInterictal = []
+  hfdArrayInterictal = []
+  binAlphaArrayInterictal = []
+  binThetaArrayInterictal = []
+
+  #for each file, determine values for each algorithm
+  for filename in sorted(os.listdir (dirname), key=numericSort):
+    if "interictal" in filename:
+    #if "ictal" in filename:
+      print filename
+      data = io.loadmat(os.path.join(dirname, filename))
+      dataArrays = dataSplit(data['data'])
+      for i in range(0,10):
+        #print dataArrays[i].shape
+        maxArrayInterictal.append(maximum(np.absolute(dataArrays[i])))
+        meanArrayInterictal.append(mean(np.absolute(dataArrays[i])))
+        varArrayInterictal.append(variance(np.absolute(dataArrays[i])))
+        binAlphaArrayInterictal.append(binAlpha(dataArrays[i]))
+        binThetaArrayInterictal.append(binTheta(dataArrays[i]))
+      #should be in for loop, but it made things SLOW
+      hfdArrayInterictal.append(hfd(dataArrays[i]))
+
+  #now for ictal (seizure)
+  for filename in sorted(os.listdir (dirname), key=numericSort):
+    #if "interictal" in filename:
+    if "_ictal" in filename:
+      print filename
+      data = io.loadmat(os.path.join(dirname, filename))
+      dataArrays = dataSplit(data['data'])
+      #for each 10th of the file
+      for i in range(0,10):
+        #print dataArrays[i].shape
+        tmp_max = maximum(np.absolute(dataArrays[i]))
+        biggest_max = 0
+        for i in range (0. data['data'].shape[0])
+          print "    max: " + np.amax(subtract(tmp_max, np.mean(maxArrayInterictal, axis=0))
+          print
+
+  #
+  print
+  print "Max interictal mean/std: %s\n/%s" %( repr(np.mean(maxArrayInterictal, axis=0)),  repr(np.std(maxArrayInterictal, axis=0)))
+  print
+  print "meanAbs interictal mean/std: %s\n/%s" %( repr(np.mean(meanArrayInterictal, axis=0)),  repr(np.std(meanArrayInterictal, axis=0)))
+  print
+  print "Var interictal mean/std: %s\n/%s" %( repr(np.mean(varArrayInterictal, axis=0)),  repr(np.std(varArrayInterictal, axis=0)))
+  print
+  print "hfd interictal mean/std: %s\n/%s" %( repr(np.mean(hfdArrayInterictal, axis=0)),  repr(np.std(hfdArrayInterictal, axis=0)))
+  print
+  print "binAlpha interictal mean/std: %s\n/%s" %( repr(np.mean(binAlphaArrayInterictal, axis=0)),  repr(np.std(binAlphaArrayInterictal, axis=0)))
+  print
+  print "binTheta interictal mean/std: %s\n/%s" %( repr(np.mean(binThetaArrayInterictal, axis=0)),  repr(np.std(binThetaArrayInterictal, axis=0)))
+
+  #
 
 
 def processDir(dirname, outputCsv):
@@ -161,5 +239,6 @@ if __name__ == "__main__":
     print
     raise(Exception("dataExaminer.py inputDir outputDir"))
 
-  processDir(args[0], args[1])
+  #processDir(args[0], args[1])
+  pickAlgorithms(args[0], args[1])
 
