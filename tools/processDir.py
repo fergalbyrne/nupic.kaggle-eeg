@@ -24,6 +24,9 @@
 # to run:
 # tools/preprocessor.py ../kaggleData/Patient_1/
 
+# to build data dir
+# cp ../../kaggleData/Patient_1/Patient_1_*ictal*1* .
+
 
 import os
 import re
@@ -94,8 +97,7 @@ def pickAlgorithms(dirname, outputCsv):
         varArrayInterictal.append(variance(np.absolute(dataArrays[i])))
         binAlphaArrayInterictal.append(binAlpha(dataArrays[i]))
         binThetaArrayInterictal.append(binTheta(dataArrays[i]))
-      #should be in for loop, but it made things SLOW
-      hfdArrayInterictal.append(hfd(dataArrays[i]))
+        hfdArrayInterictal.append(hfd(dataArrays[i]))
 
   #now for ictal (seizure)
   for filename in sorted(os.listdir (dirname), key=numericSort):
@@ -107,25 +109,28 @@ def pickAlgorithms(dirname, outputCsv):
       #for each 10th of the file
       for i in range(0,10):
         #print dataArrays[i].shape
-        tmp_max = maximum(np.absolute(dataArrays[i]))
+        print "max " + repr(maximum(np.absolute(dataArrays[i])))
+        print "mean " + repr(mean(np.absolute(dataArrays[i])))
+        print "var " + repr(variance(np.absolute(dataArrays[i])))
+        print "binAlpha: " + repr(binAlpha(dataArrays[i]))
+        print "binTheta: " + repr(binTheta(dataArrays[i]))
+        print "hfd: " + repr(hfd(dataArrays[i]))
+
         biggest_max = 0
-        for i in range (0. data['data'].shape[0])
-          print "    max: " + np.amax(subtract(tmp_max, np.mean(maxArrayInterictal, axis=0))
-          print
 
   #
   print
-  print "Max interictal mean/std: %s\n/%s" %( repr(np.mean(maxArrayInterictal, axis=0)),  repr(np.std(maxArrayInterictal, axis=0)))
+  print "Max interictal mean/std: %s\n%s" %( repr(np.mean(maxArrayInterictal, axis=0)),  repr(np.std(maxArrayInterictal, axis=0)))
   print
-  print "meanAbs interictal mean/std: %s\n/%s" %( repr(np.mean(meanArrayInterictal, axis=0)),  repr(np.std(meanArrayInterictal, axis=0)))
+  print "meanAbs interictal mean/std: %s\n%s" %( repr(np.mean(meanArrayInterictal, axis=0)),  repr(np.std(meanArrayInterictal, axis=0)))
   print
-  print "Var interictal mean/std: %s\n/%s" %( repr(np.mean(varArrayInterictal, axis=0)),  repr(np.std(varArrayInterictal, axis=0)))
+  print "Var interictal mean/std: %s\n%s" %( repr(np.mean(varArrayInterictal, axis=0)),  repr(np.std(varArrayInterictal, axis=0)))
   print
-  print "hfd interictal mean/std: %s\n/%s" %( repr(np.mean(hfdArrayInterictal, axis=0)),  repr(np.std(hfdArrayInterictal, axis=0)))
+  print "hfd interictal mean/std: %s\n%s" %( repr(np.mean(hfdArrayInterictal, axis=0)),  repr(np.std(hfdArrayInterictal, axis=0)))
   print
-  print "binAlpha interictal mean/std: %s\n/%s" %( repr(np.mean(binAlphaArrayInterictal, axis=0)),  repr(np.std(binAlphaArrayInterictal, axis=0)))
+  print "binAlpha interictal mean/std: %s\n%s" %( repr(np.mean(binAlphaArrayInterictal, axis=0)),  repr(np.std(binAlphaArrayInterictal, axis=0)))
   print
-  print "binTheta interictal mean/std: %s\n/%s" %( repr(np.mean(binThetaArrayInterictal, axis=0)),  repr(np.std(binThetaArrayInterictal, axis=0)))
+  print "binTheta interictal mean/std: %s\n%s" %( repr(np.mean(binThetaArrayInterictal, axis=0)),  repr(np.std(binThetaArrayInterictal, axis=0)))
 
   #
 
