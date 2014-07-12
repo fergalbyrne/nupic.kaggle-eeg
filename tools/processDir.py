@@ -157,12 +157,14 @@ def pickAlgorithms(dirname, outputCsv):
       dataArrays = dataSplit(data['data'])
 
       #array for determining best 5 sensors
-      bestSensorsMax = np.zeros(dataArrays[0].shape[0])
-      bestSensorsMean = np.zeros(dataArrays[0].shape[0])
-      bestSensorsVar = np.zeros(dataArrays[0].shape[0])
-      bestSensorshfd = np.zeros(dataArrays[0].shape[0])
-      bestSensorsBinAlpha = np.zeros(dataArrays[0].shape[0])
-      bestSensorsBinTheta = np.zeros(dataArrays[0].shape[0])
+      sensorsPerc = np.zeros([6,dataArrays[0].shape[0]])
+
+      #maxSensorsPerc = np.zeros(dataArrays[0].shape[0])
+      #meanSensorsPerc = np.zeros(dataArrays[0].shape[0])
+      #varSensorsPerc = np.zeros(dataArrays[0].shape[0])
+      #hfdSensorsPerc = np.zeros(dataArrays[0].shape[0])
+      #binAlphaSensorsPerc = np.zeros(dataArrays[0].shape[0])
+      #binThetaSensorsPerc = np.zeros(dataArrays[0].shape[0])
 
       #for each 10th of the file
       for i in range(0,10):
@@ -174,84 +176,61 @@ def pickAlgorithms(dirname, outputCsv):
         ictalBinAlpha = binAlpha(np.absolute(dataArrays[i]))
         ictalBinTheta = binTheta(np.absolute(dataArrays[i]))
 
-        print repr(calcPerc(ictalMax, interictalMax))
-        print repr(calcPerc(ictalMean, interictalMean))
-        print "var: " + repr(calcPerc(ictalVar, interictalVar))
-        print repr(calcPerc(ictalhfd, interictalhfd))
-        print "binAlpha: " + repr(calcPerc(ictalBinAlpha, interictalBinAlpha))
-        print repr(calcPerc(ictalBinTheta, interictalBinTheta))
-        print
+        maxPerc = calcPerc(ictalMax, interictalMax).clip(min=0)
+        meanPerc = calcPerc(ictalMean, interictalMean).clip(min=0)
+        varPerc = calcPerc(ictalVar, interictalVar).clip(min=0)
+        #hfdPerc = calcPerc(ictalhfd, interictalhfd).clip(min=0)
+        hfdPerc = calcPerc(ictalVar, interictalVar).clip(min=0)
+        binAlphaPerc = calcPerc(ictalBinAlpha, interictalBinAlpha).clip(min=0)
+        binThetaPerc = calcPerc(ictalBinTheta, interictalBinTheta).clip(min=0)
 
-        #determine Top 5 sensors
-        #assign 1 point for top 5 sensors in each row
-        maxPerc = calcPerc(ictalMax, interictalMax)
-        meanPerc = calcPerc(ictalMean, interictalMean)
-        varPerc = calcPerc(ictalVar, interictalVar)
-        hfdPerc = calcPerc(ictalhfd, interictalhfd)
-        binAlphaPerc = calcPerc(ictalBinAlpha, interictalBinAlpha)
-        binThetaPerc = calcPerc(ictalBinTheta, interictalBinTheta)
-        #print "array: " + repr(maxPerc)
+        #print "maxPerc: " + repr(maxPerc)
+        #print "maxPerc: " + repr(maxPerc.clip(min=0))
+        #print "meanPerc: " + repr(meanPerc)
+        #print "varPerc: " + repr(varPerc)
+        #print "hfdPerc: " + repr(varPerc)
+        #print "binAlphaPerc: " + repr(varPerc)
+        #print "binThetaPerc: " + repr(varPerc)
+        #print
+
+        sensorsPerc[0] = np.add(sensorsPerc[0], maxPerc)
+        sensorsPerc[1] = np.add(sensorsPerc[1], meanPerc)
+        sensorsPerc[2] = np.add(sensorsPerc[2], varPerc)
+        sensorsPerc[3] = np.add(sensorsPerc[3], hfdPerc)
+        sensorsPerc[4] = np.add(sensorsPerc[4], binAlphaPerc)
+        sensorsPerc[5] = np.add(sensorsPerc[5], binThetaPerc)
+
+        #maxSensorsPerc = np.add(maxSensorsPerc, maxPerc)
+        #meanSensorsPerc = np.add(meanSensorsPerc, meanPerc)
+        #varSensorsPerc = np.add(varSensorsPerc, varPerc)
+        #hfdSensorsPerc = np.add(hfdSensorsPerc, hfdPerc)
+        #binAlphaSensorsPerc = np.add(binAlphaSensorsPerc, binAlphaPerc)
+        #binThetaSensorsPerc = np.add(binThetaSensorsPerc, binThetaPerc)
+
         #print "maxes; " + repr(np.argmax(maxPerc))
         #print "argsort; " + repr(np.argsort(maxPerc))
 
         #a winner
         #print "argsort; " + repr(np.argsort(maxPerc)[-1:-4:-1])
-        top5 = np.argsort(maxPerc)[-1:-6:-1]
+        #top5 = np.argsort(maxPerc)[-1:-6:-1]
         #print "top5: " + repr(top5)
 
-        bestSensorsMax[top5[0]] += 1
-        bestSensorsMax[top5[1]] += 1
-        bestSensorsMax[top5[2]] += 1
-        bestSensorsMax[top5[3]] += 1
-        bestSensorsMax[top5[4]] += 1
+        #bestSensorsMax[top5[0]] += 1
+        #bestSensorsMax[top5[1]] += 1
+        #bestSensorsMax[top5[2]] += 1
+        #bestSensorsMax[top5[3]] += 1
+        #bestSensorsMax[top5[4]] += 1
 
-        top5 = np.argsort(meanPerc)[-1:-6:-1]
+      #print maxSensorsPerc
+      #print meanSensorsPerc
+      #print varSensorsPerc
+      #print "HFD" + repr(hfdSensorsPerc)
+      #print binAlphaSensorsPerc
+      #print binThetaSensorsPerc
+      print sensorsPerc
 
-        bestSensorsMean[top5[0]] += 1
-        bestSensorsMean[top5[1]] += 1
-        bestSensorsMean[top5[2]] += 1
-        bestSensorsMean[top5[3]] += 1
-        bestSensorsMean[top5[4]] += 1
+      print "argsort: " + repr(np.argsort(sensorsPerc))
 
-        top5 = np.argsort(varPerc)[-1:-6:-1]
-
-        bestSensorsVar[top5[0]] += 1
-        bestSensorsVar[top5[1]] += 1
-        bestSensorsVar[top5[2]] += 1
-        bestSensorsVar[top5[3]] += 1
-        bestSensorsVar[top5[4]] += 1
-
-        top5 = np.argsort(hfdPerc)[-1:-6:-1]
-
-        bestSensorshfd[top5[0]] += 1
-        bestSensorshfd[top5[1]] += 1
-        bestSensorshfd[top5[2]] += 1
-        bestSensorshfd[top5[3]] += 1
-        bestSensorshfd[top5[4]] += 1
-
-        top5 = np.argsort(binAlphaPerc)[-1:-6:-1]
-
-        bestSensorsBinAlpha[top5[0]] += 1
-        bestSensorsBinAlpha[top5[1]] += 1
-        bestSensorsBinAlpha[top5[2]] += 1
-        bestSensorsBinAlpha[top5[3]] += 1
-        bestSensorsBinAlpha[top5[4]] += 1
-
-        top5 = np.argsort(binThetaPerc)[-1:-6:-1]
-
-        bestSensorsBinTheta[top5[0]] += 1
-        bestSensorsBinTheta[top5[1]] += 1
-        bestSensorsBinTheta[top5[2]] += 1
-        bestSensorsBinTheta[top5[3]] += 1
-        bestSensorsBinTheta[top5[4]] += 1
-
-
-      print "bestSensorsMax: " + str(bestSensorsMax)
-      print "bestSensorsMean: " + str(bestSensorsMean)
-      print "bestSensorsVar: " + str(bestSensorsVar)
-      print "bestSensorshfd: " + str(bestSensorshfd)
-      print "bestSensorsBinAlpha: " + str(bestSensorsBinAlpha)
-      print "bestSensorsBinTheta: " + str(bestSensorsBinTheta)
       print
         
 
