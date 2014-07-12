@@ -35,7 +35,7 @@ import numpy as np
 from scipy import io
 from optparse import OptionParser
 from processFile import processFileHFD, processFileMin, processFileMax, processFileVariance, processFileMeanAbs, processFileKur, processFileVariance, processFileSkew, processFileBinPower
-from processFile import maximum, mean, variance, hfd, binAlpha, binTheta
+from processFile import maximum, mean, variance, hfd, binAlpha, binTheta, calcPerc
 
 
 
@@ -83,55 +83,188 @@ def pickAlgorithms(dirname, outputCsv):
   binAlphaArrayInterictal = []
   binThetaArrayInterictal = []
 
-  #for each file, determine values for each algorithm
-  for filename in sorted(os.listdir (dirname), key=numericSort):
-    if "interictal" in filename:
-    #if "ictal" in filename:
-      print filename
-      data = io.loadmat(os.path.join(dirname, filename))
-      dataArrays = dataSplit(data['data'])
-      for i in range(0,10):
-        #print dataArrays[i].shape
-        maxArrayInterictal.append(maximum(np.absolute(dataArrays[i])))
-        meanArrayInterictal.append(mean(np.absolute(dataArrays[i])))
-        varArrayInterictal.append(variance(np.absolute(dataArrays[i])))
-        binAlphaArrayInterictal.append(binAlpha(dataArrays[i]))
-        binThetaArrayInterictal.append(binTheta(dataArrays[i]))
-        hfdArrayInterictal.append(hfd(dataArrays[i]))
+# why wait when i've already done it once:
+#  #for each file, determine values for each algorithm
+#  for filename in sorted(os.listdir (dirname), key=numericSort):
+#    if "interictal" in filename:
+#    #if "ictal" in filename:
+#      print filename
+#      data = io.loadmat(os.path.join(dirname, filename))
+#      dataArrays = dataSplit(data['data'])
+#      for i in range(0,10):
+#        #print dataArrays[i].shape
+#        maxArrayInterictal.append(maximum(np.absolute(dataArrays[i])))
+#        meanArrayInterictal.append(mean(np.absolute(dataArrays[i])))
+#        varArrayInterictal.append(variance(np.absolute(dataArrays[i])))
+#        binAlphaArrayInterictal.append(binAlpha(dataArrays[i]))
+#        binThetaArrayInterictal.append(binTheta(dataArrays[i]))
+#        hfdArrayInterictal.append(hfd(dataArrays[i]))
+#  interictalMax = repr(np.mean(maxArrayInterictal, axis=0))
+
+  interictalMax = np.array([ 67.23762215,  73.48412301,  78.72853492,  68.86516637,
+        54.70924147,  54.99514071,  60.59178654,  66.31650694,
+        63.49467156,  82.19440027,  93.59124468,  75.15144114,
+        62.74507536,  60.92095094,  62.24432559,  67.71792745])
+
+  interictalMean = np.array([ 37.16170678,  39.86769196,  42.35656258,  37.15786066,
+        29.33104384,  29.54007121,  32.99456758,  35.2581569 ,
+        33.58022655,  44.35939825,  50.56035168,  43.02818189,
+        33.01072935,  33.04674063,  33.15804139,  35.92467463])
+
+  interictalVar = np.array([  390.82835292,   624.39043594,   715.77588938,   509.53096321,
+         330.38851062,   343.07151699,   468.75966705,   615.82016453,
+         321.18559878,   588.59305353,  1956.83318584,   694.96988964,
+        1162.08335223,   525.87184165,   551.90237667,   790.69314864])
+
+  interictalhfd = np.array([ 0.38882288,  0.37844547,  0.3480522 ,  0.35324316,  0.41821515,
+        0.42897122,  0.44744992,  0.41847166,  0.35695054,  0.31923773,
+        0.31175519,  0.3685185 ,  0.4024031 ,  0.4180439 ,  0.42729752,
+        0.36643096])
+
+  interictalBinAlpha = np.array([ 0.08689593,  0.08301133,  0.08140082,  0.08450645,  0.08688833,
+        0.08384274,  0.08022712,  0.07711098,  0.09240069,  0.08264787,
+        0.07764484,  0.07913176,  0.0839855 ,  0.08165858,  0.078732  ,
+        0.07762398])
+
+  interictalBinTheta = np.array([ 0.09243302,  0.09349234,  0.09432516,  0.09658505,  0.09281038,
+        0.08843714,  0.08573612,  0.0838762 ,  0.10311281,  0.09507699,
+        0.08978231,  0.1043497 ,  0.09215534,  0.08825326,  0.08342628,
+        0.08533456])
+
+
+  print
+  #print "Max interictal mean/std: \n%s\n%s" %( repr(np.mean(maxArrayInterictal, axis=0)),  repr(np.std(maxArrayInterictal, axis=0)))
+  print "Max interictal mean/std: \n%s" %(repr(interictalMax))
+  print
+  print "meanAbs interictal mean/std: \n%s" %(repr(interictalMean))
+  print
+  print "Var interictal mean/std: \n%s" %(repr(interictalVar))
+  print
+  print "hfd interictal mean/std: \n%s" %(repr(interictalhfd))
+  print
+  print "binAlpha interictal mean/std: \n%s" %(repr(interictalBinAlpha))
+  print
+  print "binTheta interictal mean/std: \n%s" %(repr(interictalBinTheta))
 
   #now for ictal (seizure)
   for filename in sorted(os.listdir (dirname), key=numericSort):
     #if "interictal" in filename:
     if "_ictal" in filename:
+      print
       print filename
+      print "###############"
       data = io.loadmat(os.path.join(dirname, filename))
       dataArrays = dataSplit(data['data'])
+
+      #array for determining best 5 sensors
+      bestSensorsMax = np.zeros(dataArrays[0].shape[0])
+      bestSensorsMean = np.zeros(dataArrays[0].shape[0])
+      bestSensorsVar = np.zeros(dataArrays[0].shape[0])
+      bestSensorshfd = np.zeros(dataArrays[0].shape[0])
+      bestSensorsBinAlpha = np.zeros(dataArrays[0].shape[0])
+      bestSensorsBinTheta = np.zeros(dataArrays[0].shape[0])
+
       #for each 10th of the file
       for i in range(0,10):
         #print dataArrays[i].shape
-        print "max " + repr(maximum(np.absolute(dataArrays[i])))
-        print "mean " + repr(mean(np.absolute(dataArrays[i])))
-        print "var " + repr(variance(np.absolute(dataArrays[i])))
-        print "binAlpha: " + repr(binAlpha(dataArrays[i]))
-        print "binTheta: " + repr(binTheta(dataArrays[i]))
-        print "hfd: " + repr(hfd(dataArrays[i]))
+        ictalMax = maximum(np.absolute(dataArrays[i]))
+        ictalMean = mean(np.absolute(dataArrays[i]))
+        ictalVar = variance(np.absolute(dataArrays[i]))
+        ictalhfd = hfd(np.absolute(dataArrays[i]))
+        ictalBinAlpha = binAlpha(np.absolute(dataArrays[i]))
+        ictalBinTheta = binTheta(np.absolute(dataArrays[i]))
 
-        biggest_max = 0
+        print repr(calcPerc(ictalMax, interictalMax))
+        print repr(calcPerc(ictalMean, interictalMean))
+        print "var: " + repr(calcPerc(ictalVar, interictalVar))
+        print repr(calcPerc(ictalhfd, interictalhfd))
+        print "binAlpha: " + repr(calcPerc(ictalBinAlpha, interictalBinAlpha))
+        print repr(calcPerc(ictalBinTheta, interictalBinTheta))
+        print
+
+        #determine Top 5 sensors
+        #assign 1 point for top 5 sensors in each row
+        maxPerc = calcPerc(ictalMax, interictalMax)
+        meanPerc = calcPerc(ictalMean, interictalMean)
+        varPerc = calcPerc(ictalVar, interictalVar)
+        hfdPerc = calcPerc(ictalhfd, interictalhfd)
+        binAlphaPerc = calcPerc(ictalBinAlpha, interictalBinAlpha)
+        binThetaPerc = calcPerc(ictalBinTheta, interictalBinTheta)
+        #print "array: " + repr(maxPerc)
+        #print "maxes; " + repr(np.argmax(maxPerc))
+        #print "argsort; " + repr(np.argsort(maxPerc))
+
+        #a winner
+        #print "argsort; " + repr(np.argsort(maxPerc)[-1:-4:-1])
+        top5 = np.argsort(maxPerc)[-1:-6:-1]
+        #print "top5: " + repr(top5)
+
+        bestSensorsMax[top5[0]] += 1
+        bestSensorsMax[top5[1]] += 1
+        bestSensorsMax[top5[2]] += 1
+        bestSensorsMax[top5[3]] += 1
+        bestSensorsMax[top5[4]] += 1
+
+        top5 = np.argsort(meanPerc)[-1:-6:-1]
+
+        bestSensorsMean[top5[0]] += 1
+        bestSensorsMean[top5[1]] += 1
+        bestSensorsMean[top5[2]] += 1
+        bestSensorsMean[top5[3]] += 1
+        bestSensorsMean[top5[4]] += 1
+
+        top5 = np.argsort(varPerc)[-1:-6:-1]
+
+        bestSensorsVar[top5[0]] += 1
+        bestSensorsVar[top5[1]] += 1
+        bestSensorsVar[top5[2]] += 1
+        bestSensorsVar[top5[3]] += 1
+        bestSensorsVar[top5[4]] += 1
+
+        top5 = np.argsort(hfdPerc)[-1:-6:-1]
+
+        bestSensorshfd[top5[0]] += 1
+        bestSensorshfd[top5[1]] += 1
+        bestSensorshfd[top5[2]] += 1
+        bestSensorshfd[top5[3]] += 1
+        bestSensorshfd[top5[4]] += 1
+
+        top5 = np.argsort(binAlphaPerc)[-1:-6:-1]
+
+        bestSensorsBinAlpha[top5[0]] += 1
+        bestSensorsBinAlpha[top5[1]] += 1
+        bestSensorsBinAlpha[top5[2]] += 1
+        bestSensorsBinAlpha[top5[3]] += 1
+        bestSensorsBinAlpha[top5[4]] += 1
+
+        top5 = np.argsort(binThetaPerc)[-1:-6:-1]
+
+        bestSensorsBinTheta[top5[0]] += 1
+        bestSensorsBinTheta[top5[1]] += 1
+        bestSensorsBinTheta[top5[2]] += 1
+        bestSensorsBinTheta[top5[3]] += 1
+        bestSensorsBinTheta[top5[4]] += 1
+
+
+      print "bestSensorsMax: " + str(bestSensorsMax)
+      print "bestSensorsMean: " + str(bestSensorsMean)
+      print "bestSensorsVar: " + str(bestSensorsVar)
+      print "bestSensorshfd: " + str(bestSensorshfd)
+      print "bestSensorsBinAlpha: " + str(bestSensorsBinAlpha)
+      print "bestSensorsBinTheta: " + str(bestSensorsBinTheta)
+      print
+        
+
+        #determine Top 3 metrics for those 5 sensors
+        #print "mean " + repr(mean(np.absolute(dataArrays[i])))
+        #print "var " + repr(variance(np.absolute(dataArrays[i])))
+        #print "binAlpha: " + repr(binAlpha(dataArrays[i]))
+        #print "binTheta: " + repr(binTheta(dataArrays[i]))
+        #print "hfd: " + repr(hfd(dataArrays[i]))
+
+        #biggest_max = 0
 
   #
-  print
-  print "Max interictal mean/std: %s\n%s" %( repr(np.mean(maxArrayInterictal, axis=0)),  repr(np.std(maxArrayInterictal, axis=0)))
-  print
-  print "meanAbs interictal mean/std: %s\n%s" %( repr(np.mean(meanArrayInterictal, axis=0)),  repr(np.std(meanArrayInterictal, axis=0)))
-  print
-  print "Var interictal mean/std: %s\n%s" %( repr(np.mean(varArrayInterictal, axis=0)),  repr(np.std(varArrayInterictal, axis=0)))
-  print
-  print "hfd interictal mean/std: %s\n%s" %( repr(np.mean(hfdArrayInterictal, axis=0)),  repr(np.std(hfdArrayInterictal, axis=0)))
-  print
-  print "binAlpha interictal mean/std: %s\n%s" %( repr(np.mean(binAlphaArrayInterictal, axis=0)),  repr(np.std(binAlphaArrayInterictal, axis=0)))
-  print
-  print "binTheta interictal mean/std: %s\n%s" %( repr(np.mean(binThetaArrayInterictal, axis=0)),  repr(np.std(binThetaArrayInterictal, axis=0)))
-
   #
 
 

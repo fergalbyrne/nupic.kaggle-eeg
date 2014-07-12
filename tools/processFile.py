@@ -76,7 +76,6 @@ def meanAbs(l_np):
 #  print "meanAbs:  " + repr(np.mean(np.absolute(l_np),axis=1))
   return np.mean(np.absolute(l_np),axis=1)
 
-
 def hfd(l_np):
   hfd_ret = np.zeros(l_np.shape[0])
   #print "size: " + repr(l_np.shape[0])
@@ -105,6 +104,10 @@ def binTheta(l_np):
   return binPowTheta
 
 
+def calcPerc(a,b):
+#  print "meanAbs:  " + repr(np.mean(np.absolute(l_np),axis=1))
+  # a-b/b
+  return np.divide(np.subtract(a,b), b)
 
 
 def processFileMin(data, ow):
