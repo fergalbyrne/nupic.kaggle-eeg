@@ -69,6 +69,7 @@ def convertNumpyToCsv(filename, csvName):
   for l_row in np.transpose(data['data']):
       buf[i,:] = l_row
       row = np.zeros((l_row.shape[0]+4))
+
       row[0] = dclass
       row[1] = time
       row[2] = np.mean(abs(buf[i]-np.mean(buf[i,:]))) #Mean Absolute Difference
