@@ -77,11 +77,12 @@ It uses the following params
 
 ```
 processDir.py inputDir outputbase
+```
 
 where inputDir is a dir described above.  outputbase is the base of the csv files it will create.  For example, if you
 use "patient1_output", it will create two files, patient1_output_base.csv and patient1_output_perc.csv.  The base contains
 the raw statistical values.  The perc contains how far off file results were from the average interictal values
-```
+
 
 processFile.py
 -------------
