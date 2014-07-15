@@ -218,29 +218,30 @@ def pickAlgorithms(dirname, csvName):
       #print binThetaSensorsPerc
 
       # display the sensors
-      #print repr(sensorsPerc[0])
-      #print repr(sensorsPerc[1])
-      #print repr(sensorsPerc[2])
-      #print repr(sensorsPerc[3])
-      #print repr(sensorsPerc[4])
-      #print repr(sensorsPerc[5])
-      #print
+      print repr(sensorsPerc[0])
+      print repr(sensorsPerc[1])
+      print repr(sensorsPerc[2])
+      print repr(sensorsPerc[3])
+      print repr(sensorsPerc[4])
+      print repr(sensorsPerc[5])
+      print
 
       # top 10 elements of a flattened sensorsPerc
 
       # elements of sensorsPerc that correspond to top 10 elements
       sortArray = np.argsort(sensorsPerc, axis=None)[-1:-11:-1]
-      #print "sortArray: " + repr(sortArray)
-      floorDivideArray = np.floor_divide(sortArray, 16)
-      #print "FA: " + repr(floorDivideArray)
-      modArray = np.mod(sortArray, 16)
-      #print "MA: " + repr(modArray)
+      print "sortArray: " + repr(sortArray)
+      print "shape: " + repr(dataArrays[0].shape[0])
+      floorDivideArray = np.floor_divide(sortArray, dataArrays[0].shape[0])
+      print "FA: " + repr(floorDivideArray)
+      modArray = np.mod(sortArray, dataArrays[0].shape[0])
+      print "MA: " + repr(modArray)
 
       #assign points.  10 points for 1st place, through 1 point for 10th place
       #print 
       for i in range(0,10):
-        sensorsCountIctal[floorDivideArray[i]][modArray[i]] += (10-i)
         print "%i = [%s][%s]: %s" % (i, str(floorDivideArray[i]), str(modArray[i]), str(sensorsPerc[floorDivideArray[i]][modArray[i]]))
+        sensorsCountIctal[floorDivideArray[i]][modArray[i]] += (10-i)
 
       #print "sensorCountIctal: " + repr(sensorsCountIctal)
       print
@@ -257,11 +258,11 @@ def pickAlgorithms(dirname, csvName):
   #
 
   print
-  print
   print "Ictal Sensors Count: \n" + repr(sensorsCountIctal)
+  print
   sortArray = np.argsort(sensorsCountIctal, axis=None)[-1:-11:-1]
-  floorDivideArray = np.floor_divide(sortArray, 16)
-  modArray = np.mod(sortArray, 16)
+  floorDivideArray = np.floor_divide(sortArray, sensorsCountIctal.shape[1])
+  modArray = np.mod(sortArray, sensorsCountIctal.shape[1])
   for i in range(0,10):
     ictalPlaces[0][i] = floorDivideArray[i]
     ictalPlaces[1][i] = modArray[i] 
